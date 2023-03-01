@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "KSG6BKVELW/8juoECiIhNH5HGU+SskPY9ZR071mtm7g=",
+  "Source": "JobRouterTelemetry",
+  "BasePath": "_content/JobRouterTelemetry",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

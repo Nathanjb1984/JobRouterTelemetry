@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5SspeE2kxs28K0lP4PDG9VLsJnY8G24ShkleilN4Bcl//qqT0YvUCD+ApC7PqzmONNz0s2ukdroEtpiQv/kf8A==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\natha\\source\\repos\\Telemetry\\JobRouterTelemetry\\EventService\\EventService.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\natha\\.nuget\\packages\\jasonshave.azure.communication.service.eventhandler.jobrouter\\1.0.0-alpha-2022-10-10.1\\jasonshave.azure.communication.service.eventhandler.jobrouter.1.0.0-alpha-2022-10-10.1.nupkg.sha512"
+  ],
+  "logs": []
+}

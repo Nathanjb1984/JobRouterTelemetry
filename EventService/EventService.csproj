@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JasonShave.Azure.Communication.Service.EventHandler.JobRouter" Version="1.0.0-alpha-2022-10-10.1" />
+  </ItemGroup>
+
+</Project>
