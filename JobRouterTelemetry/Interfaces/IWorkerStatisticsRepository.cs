@@ -1,4 +1,5 @@
-﻿using JobRouterTelemetry.Models;
+﻿using Azure.Communication.JobRouter.Models;
+using JobRouterTelemetry.Models;
 
 namespace JobRouterTelemetry.Interfaces
 {

@@ -12,7 +12,7 @@ namespace JobRouterTelemetry.Models
         public string id { get; set; }
         public WorkerState State { get; set; }
         public DateTimeOffset LastUpdatedTime { get; set; }
-        public DateTimeOffset CreationTime { get; set; }
+        public DateTimeOffset CreationTime { get; set; } = DateTimeOffset.Now;
         public ICollection<QueueInfo> RegisteredQueues { get; set; } = new List<QueueInfo>();
         public ICollection<ChannelConfiguration> RegisteredChannels { get; set; }
         public Dictionary<string, int> RegisteredAbilities { get; set; }

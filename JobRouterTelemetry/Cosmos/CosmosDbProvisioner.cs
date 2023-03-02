@@ -13,10 +13,10 @@ namespace JobRouterTelemetry.Cosmos
     {
         protected readonly CosmosClient _client;
         protected readonly DBOptions _config;
-        protected readonly IEnumerable<IProvisionanleRepository> _provisionableRepositories;
+        protected readonly IEnumerable<IProvisionbleRepository> _provisionableRepositories;
         protected readonly ILogger _logger;
 
-        protected CosmosDbProvisioner(DBOptions config, IEnumerable<IProvisionanleRepository> provisionableRepositories, ILogger logger)
+        protected CosmosDbProvisioner(DBOptions config, IEnumerable<IProvisionbleRepository> provisionableRepositories, ILogger logger)
         {
             _client = new CosmosClient(config.ConnectionString);
             _config = config;

@@ -1,4 +1,5 @@
-﻿using JobRouterTelemetry.Cosmos;
+﻿using Azure.Communication.JobRouter.Models;
+using JobRouterTelemetry.Cosmos;
 using JobRouterTelemetry.Interfaces;
 using JobRouterTelemetry.Models;
 using Microsoft.Azure.Cosmos;

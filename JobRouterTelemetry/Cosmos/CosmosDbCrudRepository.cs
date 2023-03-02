@@ -1,15 +1,8 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Scripts;
-using Microsoft.Extensions.Logging;
-using JobRouterTelemetry.Interfaces;
+﻿using JobRouterTelemetry.Interfaces;
 using JobRouterTelemetry.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Scripts;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace JobRouterTelemetry.Cosmos
 {

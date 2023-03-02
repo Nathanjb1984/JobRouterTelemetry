@@ -27,14 +27,17 @@ namespace JobRouterTelemetry.Extensions
             services.AddTransient<ICosmosDbProvisioner, WorkerStatisticsDbProvisioner>();
             services.AddTransient<ICosmosDbProvisioner, JobStatisticsDbProvisioner>();
             services.AddTransient<ICosmosDbProvisioner, QueueStatisticsDbProvisioner>();
+            services.AddTransient<ICosmosDbProvisioner, WorkerEventStoreDbProvisioner>();
 
             services.AddSingleton<IWorkerStatisticsRepository, WorkerStatisticsRepository>();
             services.AddSingleton<IJobStatisticsRepository, JobStatisticsRepository>();
             services.AddSingleton<IQueueStatisticsRepository, QueueStatisticsRepository>();
+            services.AddSingleton<IWorkerEventStore, WorkerEventStore>();
 
-            services.AddTransient<IProvisionanleRepository, WorkerStatisticsRepository>();
-            services.AddTransient<IProvisionanleRepository, JobStatisticsRepository>();
-            services.AddTransient<IProvisionanleRepository, QueueStatisticsRepository>();
+            services.AddTransient<IProvisionbleRepository, WorkerStatisticsRepository>();
+            services.AddTransient<IProvisionbleRepository, JobStatisticsRepository>();
+            services.AddTransient<IProvisionbleRepository, QueueStatisticsRepository>();
+            services.AddTransient<IProvisionbleRepository, WorkerEventStore>();
 
             return services;
         }

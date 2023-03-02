@@ -11,7 +11,8 @@ namespace JobRouterTelemetry
     {
         private IJobStatisticsRepository _jobStatisticsRepository;
         private IWorkerStatisticsRepository _workerStatisticsRepository;
-        public EventService(IJobRouterEventSubscriber jobRouterEventSubscriber, IJobStatisticsRepository jobStatisticsRepository, IWorkerStatisticsRepository workerStatisticsRepository)
+        private IWorkerEventStore _workerEventStore;
+        public EventService(IJobRouterEventSubscriber jobRouterEventSubscriber, IJobStatisticsRepository jobStatisticsRepository, IWorkerStatisticsRepository workerStatisticsRepository, IWorkerEventStore workerEventStore)
         {
             jobRouterEventSubscriber.OnJobReceived += HandleJobReceived;
             jobRouterEventSubscriber.OnJobQueued += HandleJobQueued;
@@ -32,12 +33,16 @@ namespace JobRouterTelemetry
 
             _jobStatisticsRepository = jobStatisticsRepository;
             _workerStatisticsRepository = workerStatisticsRepository;
+            _workerEventStore = workerEventStore;
         }
 
         private async ValueTask HandleWorkerDeregistered(RouterWorkerDeregistered arg1, string? arg2)
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(), EventData = new RouterWorkerDeregistered { WorkerId = arg1.WorkerId } } };
+                await _workerEventStore.ApplyNewEventsAsync(arg1.WorkerId, envelope);
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.State = WorkerState.DeRegistered;
                 workerEntity.LastUpdatedTime = DateTimeOffset.UtcNow;
@@ -54,6 +59,10 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerRegistered { WorkerId = arg1.WorkerId, ChannelConfigurations = arg1.ChannelConfigurations, Labels = arg1.Labels, QueueAssignments = arg1.QueueAssignments, TotalCapacity = arg1.TotalCapacity } }};
+                await _workerEventStore.ApplyNewEventsAsync(arg1.WorkerId, envelope);
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.State = WorkerState.Registered;
                 workerEntity.RegisteredQueues = arg1.QueueAssignments;
@@ -147,6 +156,10 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterJobClosed { WorkerId = arg1.WorkerId, AssignmentId = arg1.AssignmentId, Labels = arg1.Labels, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId, Tags = arg1.Tags, DispositionCode = arg1.DispositionCode } }};
+                await _workerEventStore.ApplyNewEventsAsync(arg1.WorkerId, envelope);
+
                 var jobEntity = await _jobStatisticsRepository.Get(arg1.JobId, arg1.JobId).ConfigureAwait(false);
                 jobEntity.State = State.Closed;
                 jobEntity.JobClosedTime = DateTimeOffset.UtcNow;
@@ -162,6 +175,9 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterJobCompleted { WorkerId = arg1.WorkerId, AssignmentId = arg1.AssignmentId, Labels = arg1.Labels, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId, Tags = arg1.Tags } } };
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.JobsCompleted.Add(arg1);
                 await _workerStatisticsRepository.Replace(workerEntity, arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
@@ -181,6 +197,9 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerOfferDeclined { WorkerId = arg1.WorkerId, OfferId = arg1.OfferId, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId } } };
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.OfferDeclined.Add(arg1);
                 await _workerStatisticsRepository.Replace(workerEntity, arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
@@ -199,6 +218,9 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerOfferAccepted { WorkerId = arg1.WorkerId, OfferId = arg1.OfferId, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId, AssignmentId = arg1.AssignmentId, JobLabels = arg1.JobLabels, JobPriority = arg1.JobPriority, JobTags = arg1.JobTags } } };
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.OfferAccepted.Add(arg1);
                 workerEntity.AssignedJob = arg1.JobId;
@@ -222,6 +244,8 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerOfferExpired { WorkerId = arg1.WorkerId, OfferId = arg1.OfferId, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId } } };
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.OfferExpired.Add(arg1);
                 await _workerStatisticsRepository.Replace(workerEntity, arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
@@ -240,6 +264,9 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerOfferRevoked { WorkerId = arg1.WorkerId, OfferId = arg1.OfferId, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId } } };
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.OfferRevoked.Add(arg1);
                 await _workerStatisticsRepository.Replace(workerEntity, arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
@@ -258,6 +285,9 @@ namespace JobRouterTelemetry
         {
             try
             {
+                var envelope = new List<EventEnvelope> { new EventEnvelope { EntityId = arg1.WorkerId, EventTime = DateTimeOffset.UtcNow, EventType = arg1.GetType().ToString(),
+                    EventData = new RouterWorkerOfferIssued { WorkerId = arg1.WorkerId, OfferId = arg1.OfferId, ChannelId = arg1.ChannelId, ChannelReference = arg1.ChannelReference, JobId = arg1.JobId, QueueId = arg1.QueueId, ExpiryTimeUtc = arg1.ExpiryTimeUtc, JobTags = arg1.JobTags, JobPriority = arg1.JobPriority, JobLabels = arg1.JobLabels, OfferTimeUtc = arg1.OfferTimeUtc } } };
+
                 var workerEntity = await _workerStatisticsRepository.Get(arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);
                 workerEntity.OfferIssued.Add(arg1);
                 await _workerStatisticsRepository.Replace(workerEntity, arg1.WorkerId, arg1.WorkerId).ConfigureAwait(false);

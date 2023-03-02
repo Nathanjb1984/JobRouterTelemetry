@@ -45,7 +45,21 @@ var summaries = new[]
 };
 
 app.MapPost("/EventGridEvents", (EventGridEvent[] eventGridEvents,
-              [FromServices] IEventPublisher<Router> publisher) => publisher.Publish(eventGridEvents));
+              [FromServices]IEventPublisher<Router> publisher) => publisher.Publish(eventGridEvents));
+
+app.MapGet("/workerEvents", () =>
+{
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateTime.Now.AddDays(index),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWorkerEvents");
 
 app.MapGet("/weatherforecast", () =>
 {

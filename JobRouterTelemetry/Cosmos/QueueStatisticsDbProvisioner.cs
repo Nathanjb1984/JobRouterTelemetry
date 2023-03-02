@@ -6,7 +6,7 @@ namespace JobRouterTelemetry.Cosmos
 {
     public class QueueStatisticsDbProvisioner : CosmosDbProvisioner
     {
-        public QueueStatisticsDbProvisioner(DBOptions config, IEnumerable<IProvisionanleRepository> provisionableRepositories, ILogger<QueueStatisticsDbProvisioner> logger)
+        public QueueStatisticsDbProvisioner(DBOptions config, IEnumerable<IProvisionbleRepository> provisionableRepositories, ILogger<QueueStatisticsDbProvisioner> logger)
             : base(config, provisionableRepositories, logger)
         {
         }
